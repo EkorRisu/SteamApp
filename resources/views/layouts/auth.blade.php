@@ -10,33 +10,38 @@
     @yield('styles')
 </head>
 
-<body class="bg-gray-900 min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col">
     <!-- Navigation -->
-    <nav class="bg-gray-800 p-4">
+    <nav
+        style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); padding: 15px 0; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <a href="{{ url('/') }}" class="flex items-center space-x-2">
-                    <i class="fas fa-gamepad text-purple-500 text-2xl"></i>
-                    <span class="font-bold text-xl text-white">ShopGaming</span>
+                <a class="brand-text flex items-center space-x-2 text-white font-bold text-xl"
+                    href="{{ route('home') }}">
+                    <img src="{{ asset('images/icon.svg') }}" alt="Play Icon" class="w-10 h-10">
+                    <span>play play</span>
                 </a>
+
             </div>
-            <div class="hidden md:flex space-x-6">
-                <a href="{{ url('/') }}" class="text-gray-300 hover:text-white">Home</a>
-                <a href="#" class="text-gray-300 hover:text-white">Catalog</a>
-                <a href="#" class="text-gray-300 hover:text-white">Contact</a>
-            </div>
+
             <div class="flex space-x-2">
                 @guest
+                <div style="display: flex; align-items: center;">
                     @if (Route::has('login'))
-                        <a href="{{ route('login') }}"
-                            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">Login</a>
+                    <a href="{{ route('login') }}"
+                        style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); color: white; padding: 8px 20px; border-radius: 25px; font-weight: 500; transition: all 0.3s ease; backdrop-filter: blur(10px); text-decoration: none; margin-left: 10px;">
+                        Login
+                    </a>
                     @endif
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded">Register</a>
+                    <a href="{{ route('register') }}"
+                        style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); color: white; padding: 8px 20px; border-radius: 25px; font-weight: 500; transition: all 0.3s ease; backdrop-filter: blur(10px); text-decoration: none; margin-left: 10px;">
+                        Register
+                    </a>
                     @endif
-                @else
+
+                    @else
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center text-white space-x-1">
                             <span>{{ Auth::user()->name }}</span>
@@ -57,9 +62,9 @@
                             </form>
                         </div>
                     </div>
-                @endguest
+                    @endguest
+                </div>
             </div>
-        </div>
     </nav>
 
     <!-- Main Content -->
@@ -68,16 +73,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-6 border-t border-gray-800">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center space-x-2 mb-4 md:mb-0">
-                    <i class="fas fa-gamepad text-purple-500 text-2xl"></i>
-                    <span class="font-bold text-xl">ShopGaming</span>
+    <footer
+        style="background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); padding: 15px 0; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);">
+        <div class="container mx-auto px-4 text-center">
+            <div class="container">
+                <p>&copy; 2025 play play. All rights reserved.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                 </div>
-                <p class="text-gray-400 text-sm">© 2025 ShopGaming. All Rights Reserved.</p>
             </div>
-        </div>
     </footer>
 
     <!-- Alpine.js for dropdown functionality -->

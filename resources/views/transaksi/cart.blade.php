@@ -57,8 +57,8 @@
                                                                         <button type="submit" class="btn btn-sm btn-danger me-0">Batal</button>
                                                                     @elseif($cart->status == 'Selesai')
                                                                         <!-- Jika status Selesai, tampilkan tombol Cetak -->
-                                                                        <a href="{{ route('transaksi.cetak', $transaksi->id) }}" target="_blank"
-                                                                            class="btn btn-sm btnsuccess me-0">Cetak</a>
+                                                                        <a href="{{ route('transaksi.cetak', $cart->id) }}" target="_blank"
+                                                                            class="btn btn-sm btn-success me-0">Cetak</a>
                                                                     @endif
                                                                 </form>
                                                             </td>

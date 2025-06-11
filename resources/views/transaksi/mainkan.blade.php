@@ -1,10 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h1 class="mb-3">🎮 Mainkan Game</h1>
-        <iframe src="{{ asset('games/' . $slug . '/index.html') }}" width="100%" height="600px" frameborder="0">
-            Browser Anda tidak mendukung iframe.
-        </iframe>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="mb-3">🎮 {{ $gameName }}</h1>
+        </div>
+        <div class="card-body">
+            <iframe 
+                src="{{ $gameUrl }}" 
+                width="100%" 
+                height="600px" 
+                frameborder="0"
+                allowfullscreen>
+                Browser Anda tidak mendukung iframe.
+            </iframe>
+        </div>
     </div>
+</div>
 @endsection

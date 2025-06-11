@@ -39,30 +39,43 @@ class PembelianController extends Controller
         $user = Auth::user();
         $produk = Produk::findOrFail($request->produk_id);
 
-        // Periksa apakah stok cukup
+        // Cek stok
         if ($produk->stok < 1) {
             return redirect()->back()->with('error', 'Stok produk habis!');
         }
 
-        // Kurangi stok
-        $produk->stok -= 1;
-        $produk->save();
+        // Cek apakah sudah ada di cart
+        $existingCart = Cart::where('user_id', $user->id)
+                           ->where('kode_produk', $produk->kode_produk)
+                           ->first();
 
-        $cart = new Cart();
-        $cart->user_id = $user->id;
-        $cart->kode_produk = $produk->kode_produk;
-        $cart->nama_user = $user->name;
-        $cart->harga = $produk->harga;
-        $cart->status = 'pending';
-        $cart->save();
+        if ($existingCart) {
+            return redirect()->back()->with('error', 'Produk sudah ada di cart!');
+        }
 
-        return redirect()->route('transaksi.cart')->with('success', 'Produk berhasil dipesan!');
+        // Buat cart baru
+        Cart::create([
+            'user_id' => $user->id,
+            'kode_produk' => $produk->kode_produk,
+            'nama_user' => $user->name,
+            'harga' => $produk->harga,
+            'status' => 'pending'
+        ]);
+
+        return redirect()->route('transaksi.cart')
+                        ->with('success', 'Produk berhasil ditambahkan ke cart!');
     }
 
     public function clearcart($id)
     {
         $cart = Cart::where('id', $id)->where('user_id', Auth::user()->id)->first();
         if ($cart) {
+            // Restore product stock
+            $produk = Produk::where('kode_produk', $cart->kode_produk)->first();
+            if ($produk) {
+                $produk->stok += 1;
+                $produk->save();
+            }
             $cart->delete();
             return redirect()->route('transaksi.cart')->with('success', 'Item berhasil dihapus dari cart.');
         }
@@ -189,16 +202,24 @@ class PembelianController extends Controller
             ->where('id', $id)
             ->where('user_id', $user->id)
             ->where('status', 'Selesai')
-            ->first();
+            ->firstOrFail();
 
         if (!$transaksi || !$transaksi->produk) {
-            return redirect()->back()->with('error', 'Game tidak ditemukan atau belum selesai transaksi.');
+            return redirect()->back()->with('error', 'Game tidak ditemukan.');
         }
 
-        // Contoh path lengkap menggunakan kode_produk + nama game slugified
-        $folderGame = $transaksi->produk->kode_produk . '/' . Str::slug($transaksi->produk->nama);
+        // Gunakan kode_produk sebagai folder name
+        $gamePath = "games/{$transaksi->produk->kode_produk}/index.html";
+        
+        // Cek apakah file index.html exists
+        if (!file_exists(public_path($gamePath))) {
+            return redirect()->back()->with('error', 'File game tidak ditemukan. Pastikan game sudah diextract dengan benar.');
+        }
 
-        return view('transaksi.mainkan', ['slug' => $folderGame]);
+        return view('transaksi.mainkan', [
+            'gameUrl' => asset($gamePath),
+            'gameName' => $transaksi->produk->nama
+        ]);
     }
 
 

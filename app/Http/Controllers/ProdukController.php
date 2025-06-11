@@ -6,167 +6,203 @@ use App\Models\Produk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Exception;
 
 class ProdukController extends Controller
 {
-    // Menampilkan semua produk (user)
+    private const SUCCESS_MESSAGE = [
+        'store' => 'Produk berhasil ditambahkan',
+        'update' => 'Produk berhasil diperbarui',
+        'delete' => 'Produk berhasil dihapus'
+    ];
+
+    // Validasi rules yang digunakan berulang
+    private const VALIDATION_RULES = [
+        'nama' => 'required',
+        'deskripsi' => 'nullable',
+        'harga' => 'required|numeric',
+        'stok' => 'required|integer',
+        'kategori_id' => 'required|exists:kategoris,id',
+        'platform' => 'required',
+        'zip_file' => 'nullable|file|mimes:zip|max:50000',  // Maksimal 50MB
+        'gambar' => 'nullable|image|max:2048',
+    ];
+
     public function index()
     {
-        $produks = Produk::all();  // Ambil semua produk
-        return view('adminHome', ['produks' => $produks]);
+        $produks = Produk::with('kategori')->get();  // Eager loading untuk optimasi
+        return view('adminHome', compact('produks'));
     }
 
-    // Menampilkan form tambah produk (admin)
     public function create()
     {
-        $kategoris = Kategori::all(); // Ambil semua kategori
+        $kategoris = Kategori::all();
         return view('produk.create', compact('kategoris'));
     }
 
-    // Menambah produk baru (admin)
     public function store(Request $request)
     {
-        $request->validate([
-            'kode_produk' => 'required|unique:produks',
-            'nama' => 'required',
-            'deskripsi' => 'nullable',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
-            'kategori_id' => 'required|exists:kategoris,id', // Menggunakan kategori_id yang benar
-            'platform' => 'required',
-            'zip_file' => 'nullable|file|mimes:zip|max:10240',
-            'gambar' => 'nullable|image|max:2048',  // Validasi gambar
-        ]);
+        $validatedData = $request->validate(array_merge(
+            self::VALIDATION_RULES,
+            ['kode_produk' => 'required|unique:produks']
+        ));
 
         try {
-            // Menangani upload file ZIP dan gambar
             $uploadedFiles = $this->handleFileUpload($request);
+            
+            Produk::create(array_merge($validatedData, $uploadedFiles));
 
-            // Menyimpan data produk baru
-            Produk::create(array_merge($request->only([
-                'kode_produk',
-                'nama',
-                'deskripsi',
-                'harga',
-                'stok',
-                'kategori_id',
-                'platform',
-            ]), $uploadedFiles));
-
-            return redirect()->route('adminHome')->with('success', 'Produk berhasil ditambahkan');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+            return redirect()->route('adminHome')
+                           ->with('success', self::SUCCESS_MESSAGE['store']);
+        } catch (Exception $e) {
+            return $this->handleError($e);
         }
     }
 
-    // Edit produk (admin)
     public function edit($id)
     {
-        $produk = Produk::find($id);
-        $kategoris = Kategori::all(); // Ambil semua kategori
+        $produk = Produk::findOrFail($id);
+        $kategoris = Kategori::all();
         return view('produk.edit', compact('produk', 'kategoris'));
     }
 
-    // Update produk (admin)
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $produk = Produk::findOrFail($id);
+        
+        $validatedData = $request->validate([
+            'kode_produk' => 'required',
             'nama' => 'required',
-            'deskripsi' => 'nullable',
             'harga' => 'required|numeric',
             'stok' => 'required|integer',
             'kategori_id' => 'required|exists:kategoris,id',
-            'platform' => 'required',
-            'zip_file' => 'nullable|file|mimes:zip|max:10240',
-            'gambar' => 'nullable|image|max:2048',
+            'platform' => 'required'
         ]);
 
-        $produk = Produk::find($id);
-
         try {
-            // Menangani upload file ZIP dan gambar
             $uploadedFiles = $this->handleFileUpload($request, $produk);
+            $produk->update(array_merge($validatedData, $uploadedFiles));
 
-            // Update produk dengan data baru
-            $produk->update(array_merge($request->only([
-                'nama',
-                'deskripsi',
-                'harga',
-                'stok',
-                'kategori_id',
-                'platform',
-            ]), $uploadedFiles));
-
-            return redirect()->route('adminHome')->with('success', 'Produk berhasil diperbarui');
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+            return redirect()->route('adminHome')
+                            ->with('success', 'Produk berhasil diperbarui');
+        } catch (Exception $e) {
+            return redirect()->back()
+                            ->withInput()
+                            ->withErrors(['error' => $e->getMessage()]);
         }
     }
 
-    // Hapus produk (admin)
     public function destroy($id)
     {
-        $produk = Produk::find($id);
+        try {
+            $produk = Produk::findOrFail($id);
+            $this->deleteAssociatedFiles($produk);
+            $produk->delete();
 
-        // Hapus file terkait dari storage
+            return redirect()->route('adminHome')
+                            ->with('success', self::SUCCESS_MESSAGE['delete']);
+        } catch (Exception $e) {
+            return redirect()->back()
+                            ->withErrors(['error' => 'Gagal menghapus produk: ' . $e->getMessage()]);
+        }
+    }
+
+    private function deleteAssociatedFiles(Produk $produk)
+    {
         if ($produk->gambar) {
             Storage::disk('public')->delete($produk->gambar);
         }
         if ($produk->zip_file) {
             Storage::disk('public')->delete($produk->zip_file);
         }
-        $slug = $produk->kode_produk;
-        $gameFolder = public_path('games/' . $slug);
-        if (file_exists($gameFolder)) {
-            rmdir($gameFolder); // Hapus folder game jika ada
+
+        $gameFolder = public_path("games/{$produk->kode_produk}");
+        if (File::exists($gameFolder)) {
+            File::deleteDirectory($gameFolder);  // Lebih aman daripada rmdir
         }
-
-        $produk->delete();
-
-        return redirect()->route('adminHome')->with('success', 'Produk berhasil dihapus');
     }
 
-    // Metode untuk menangani upload file
     private function handleFileUpload($request, $produk = null)
     {
         $data = [];
-        if ($request->hasFile('zip_file')) {
-            $slug = $request->kode_produk ?? $produk->kode_produk;
-
-            // Simpan file ZIP ke storage/app/public/games_zip
-            $zipPath = $request->file('zip_file')->storeAs(
-                'games_zip',
-                $slug . '.zip',
-                'public'
-            );
-
-            // Ekstrak file ZIP ke public/games/{slug}
-            $extractPath = public_path('games/' . $slug);
-            if (!file_exists($extractPath)) {
-                mkdir($extractPath, 0755, true);
-            }
-
-            $zip = new \ZipArchive;
-            if ($zip->open(storage_path('app/public/' . $zipPath)) === TRUE) {
-                $zip->extractTo($extractPath);
-                $zip->close();
-            } else {
-                throw new \Exception('Gagal mengekstrak file ZIP.');
-            }
-
-            // Simpan path ZIP ke database
-            $data['zip_file'] = 'storage/' . $zipPath; // agar bisa diakses publik
-        }
-
-
-        // Menangani gambar
+        
         if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
             if ($produk && $produk->gambar) {
-                Storage::disk('public')->delete($produk->gambar); // Hapus gambar lama
+                Storage::disk('public')->delete($produk->gambar);
             }
-            $data['gambar'] = $request->file('gambar')->store('gambar-produk', 'public');
+            
+            $file = $request->file('gambar');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('gambar-produk', $filename, 'public');
+            $data['gambar'] = $path;
+        }
+        
+        if ($request->hasFile('zip_file')) {
+            $data['zip_file'] = $this->handleZipFile($request, $produk);
         }
 
         return $data;
+    }
+
+    private function handleZipFile($request, $produk = null)
+    {
+        if (!class_exists('\ZipArchive')) {
+            throw new Exception('Ekstensi PHP ZipArchive belum aktif.');
+        }
+
+        $kode_produk = $request->kode_produk ?? $produk->kode_produk;
+        
+        // Simpan file zip
+        $zipPath = $request->file('zip_file')->storeAs(
+            'games_zip',
+            "{$kode_produk}.zip",
+            'public'
+        );
+
+        // Path ekstrak di public/games/{kode_produk}
+        $extractPath = public_path("games/{$kode_produk}");
+
+        // Hapus folder lama jika ada
+        if (File::exists($extractPath)) {
+            File::deleteDirectory($extractPath);
+        }
+
+        // Buat folder baru
+        File::makeDirectory($extractPath, 0755, true, true);
+
+        // Extract zip
+        $zip = new \ZipArchive;
+        $zipFullPath = storage_path("app/public/{$zipPath}");
+        
+        if ($zip->open($zipFullPath) === TRUE) {
+            $zip->extractTo($extractPath);
+            $zip->close();
+
+            // Verify index.html exists
+            if (!File::exists("{$extractPath}/index.html")) {
+                throw new Exception('File index.html tidak ditemukan dalam ZIP.');
+            }
+        } else {
+            throw new Exception('Gagal membuka file ZIP.');
+        }
+
+        return $zipPath;
+    }
+
+    private function handleImageFile($request, $produk = null)
+    {
+        if ($produk && $produk->gambar) {
+            Storage::disk('public')->delete($produk->gambar);
+        }
+        return $request->file('gambar')->store('gambar-produk', 'public');
+    }
+
+    private function handleError(Exception $e)
+    {
+        return redirect()->back()
+                        ->withInput()
+                        ->withErrors(['error' => $e->getMessage()]);
     }
 }
