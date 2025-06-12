@@ -4,7 +4,7 @@
 <!-- Hero Section -->
 <section class="bg-gradient-to-br from-gaming-purple via-gaming-dark to-gaming-blue min-h-screen flex items-center justify-center">
     <div class="text-center px-4 sm:px-6 lg:px-8 max-w-4xl">
-        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">Selamat Datang di <span class="text-gaming-purple">Play Play</span></h1>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">Selamat Datang <span class="text-gaming-purple"> {{ Auth::user()->name }}</span></h1>
         <p class="text-lg md:text-2xl text-gray-300 mb-8">Temukan & beli game favoritmu dengan harga terbaik</p>
         <div class="flex flex-col sm:flex-row justify-center gap-4">
             <a href="#games-section" class="px-8 py-3 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200">

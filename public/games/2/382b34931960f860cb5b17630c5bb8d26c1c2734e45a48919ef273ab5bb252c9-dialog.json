@@ -1,0 +1,72 @@
+[
+	{
+		"title": "Start",
+		"tags": "",
+		"body": "???: Halo aku yuki, penyihir yang akan mengujimu.\nYuki: apakah kamu tertarik jika aku menguji kamu???, tenang saja ada imbalanya kok\n[[ answer: ya, aku tertarik|ya]]\n[[ answer: Tidak, Ku tidak tertarik|no]] |]]",
+		"position": {
+			"x": 366,
+			"y": 233
+		},
+		"colorID": 0
+	},
+	{
+		"title": "ya",
+		"tags": "",
+		"body": "Yuki: Bagus Jika Kamu tertarik, tenang saja kamu pasti akan mendapat imbalanya.\nYuki: Ok, untuk tes yang Pertama adalah\nYuki: Apa Kepanjangan dari OOP?\n[[ answer: Object Oriented Programing|yes]] |]]\n[[ answer: Oriented Object Project|salah]] |]]",
+		"position": {
+			"x": 117,
+			"y": 61
+		},
+		"colorID": 0
+	},
+	{
+		"title": "no",
+		"tags": "",
+		"body": "Yuki: Baiklah Kamu bisa kembali jika kamu tertarik",
+		"position": {
+			"x": 774,
+			"y": 112
+		},
+		"colorID": 0
+	},
+	{
+		"title": "yes",
+		"tags": "",
+		"body": "Yuki: Wahh Jawaban Kamu benar, Kamu Hebat\nYuki: untuk mendapatkan koin OOP Kamu Harus menjawab pertanyaanku lagi ya\nYuki: apa yang dimaksud dengan object??\n[[ answer: entitas yang menggabungkan data dan fungsi yang bekerja pada data tersebut|benar]] |]]\n[[ answer: elemen penting yang digunakan untuk menyimpan data|salah]] |]]",
+		"position": {
+			"x": 235,
+			"y": -160
+		},
+		"colorID": 0
+	},
+	{
+		"title": "salah",
+		"tags": "",
+		"body": "Yuki: Sayang Sekali Jawaban Mu kurang Tepat\nYuki: Silakan Mengulang lagi",
+		"position": {
+			"x": 775,
+			"y": -103
+		},
+		"colorID": 0
+	},
+	{
+		"title": "benar",
+		"tags": "",
+		"body": "Yuki: Selamat Kamu Benar\nYuki: Pertanyaan Selanjutanya\nYuki: Apa yang dimaksud kelas dalam OOP??\n[[ answer: Variabel yang menyimpan data|salah]] |]]\n[[ answer: Sebuah Blueprint untuk membuat object|benarr]] |]]",
+		"position": {
+			"x": 242,
+			"y": -449
+		},
+		"colorID": 0
+	},
+	{
+		"title": "benarr",
+		"tags": "",
+		"body": "Yuki: Selamat Kamu Berhasil Mendapatkan 80 OOP Koins",
+		"position": {
+			"x": 231,
+			"y": -730
+		},
+		"colorID": 0
+	}
+]

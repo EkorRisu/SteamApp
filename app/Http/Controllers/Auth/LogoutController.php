@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LogoutController extends Controller
 {
-    public function signout()
+    public function signout(Request $request)
     {
-        // Hapus semua session
-        Session::flush();
-
-        // Logout pengguna
-        // Auth::logout(); // Bisa diaktifkan jika menggunakan facade Auth untuk logout
-
-        // Redirect ke halaman login
-        return redirect()->route('login'); // Pastikan ada route login yang didefinisikan
+        Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('welcome');
     }
 }

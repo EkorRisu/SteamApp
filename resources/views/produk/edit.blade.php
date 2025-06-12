@@ -1,130 +1,107 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
-<div class="container mx-auto px-4 py-8">
-    <!-- Header -->
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Edit Produk</h2>
-        <p class="text-gray-600">Update informasi produk game</p>
-    </div>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-300 to-blue-200 px-4 py-10">
+    <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-3xl shadow-2xl backdrop-blur-sm flex flex-col md:flex-row overflow-hidden">
+        <!-- Left: Icon and Title -->
+        <div class="md:w-1/2 bg-transparent p-10 flex flex-col justify-center items-center text-center">
+            <img src="{{ asset('images/icon.svg') }}" alt="Play Icon" class="w-20 h-20">
+            <h2 class="text-3xl font-extrabold text-purple-800">Edit Game</h2>
+            <p class="text-gray-600 mt-2">Update game information</p>
+        </div>
 
-    <!-- Error Messages -->
-    @if ($errors->any())
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">Terdapat beberapa kesalahan:</h3>
-                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-                    @foreach ($errors->all() as $error)
+        <!-- Right: Form -->
+        <div class="md:w-1/2 bg-white bg-opacity-20 rounded-3xl p-10">
+            @if($errors->any())
+            <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                <ul class="list-disc ml-4">
+                    @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
+            @endif
+
+            <form action="{{ route('produk.update', $produk->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                <!-- Kode Produk -->
+                <div>
+                    <input type="text" name="kode_produk" id="kode_produk"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-400"
+                        value="{{ old('kode_produk', $produk->kode_produk) }}" placeholder="Product Code" required>
+                </div>
+
+                <!-- Nama -->
+                <div>
+                    <input type="text" name="nama" id="nama"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-400"
+                        value="{{ old('nama', $produk->nama) }}" placeholder="Game Name" required>
+                </div>
+
+                <!-- Harga -->
+                <div>
+                    <input type="number" name="harga" id="harga"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-400"
+                        value="{{ old('harga', $produk->harga) }}" placeholder="Price" required>
+                </div>
+
+                <!-- Stok -->
+                <div>
+                    <input type="number" name="stok" id="stok"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-400"
+                        value="{{ old('stok', $produk->stok) }}" placeholder="Stock" required>
+                </div>
+
+                <!-- Kategori -->
+                <div>
+                    <select name="kategori_id"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 focus:ring-2 focus:ring-purple-400"
+                        required>
+                        <option value="">Select Category</option>
+                        @foreach($kategoris as $kategori)
+                        <option value="{{ $kategori->id }}" {{ old('kategori_id', $produk->kategori_id) == $kategori->id ? 'selected' : '' }}>
+                            {{ $kategori->nama }}
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Platform -->
+                <div>
+                    <select name="platform" id="platform"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 focus:ring-2 focus:ring-purple-400"
+                        required>
+                        <option value="">Select Platform</option>
+                        <option value="pc" {{ $produk->platform == 'pc' ? 'selected' : '' }}>PC</option>
+                        <option value="mobile" {{ $produk->platform == 'mobile' ? 'selected' : '' }}>Mobile</option>
+                        <option value="console" {{ $produk->platform == 'console' ? 'selected' : '' }}>Console</option>
+                    </select>
+                </div>
+
+                <!-- Product Image -->
+                <div>
+                    <label class="block mb-2 text-sm text-gray-600">Product Image</label>
+                    <input type="file" name="gambar" id="gambar"
+                        class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 focus:ring-2 focus:ring-purple-400"
+                        accept="image/*">
+                    @if($produk->gambar)
+                    <div class="mt-4 rounded-xl overflow-hidden w-32 h-32">
+                        <img src="{{ asset('storage/' . $produk->gambar) }}" alt="Game Image" class="w-full h-full object-cover">
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-md transition-all duration-300">
+                        Update Game
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    @endif
-
-    <form action="{{ route('produk.update', $produk->id) }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-6">
-    @csrf
-    @method('PUT')
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Kode Produk -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="kode_produk">
-                    Kode Produk
-                </label>
-                <input type="text" name="kode_produk" id="kode_produk"
-                    class="form-control @error('kode_produk') is-invalid @enderror"
-                    value="{{ old('kode_produk', $produk->kode_produk) }}" required>
-            </div>
-
-            <!-- Nama Produk -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="nama">
-                    Nama Produk
-                </label>
-                <input type="text" name="nama" id="nama" class="form-control @error('nama') is-invalid @enderror"
-                    value="{{ old('nama', $produk->nama) }}" required>
-            </div>
-
-            <!-- Harga -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="harga">
-                    Harga
-                </label>
-                <input type="number" name="harga" id="harga" class="form-control @error('harga') is-invalid @enderror"
-                    value="{{ old('harga', $produk->harga) }}" required>
-            </div>
-
-            <!-- Stok -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="stok">
-                    Stok
-                </label>
-                <input type="number" name="stok" id="stok" class="form-control @error('stok') is-invalid @enderror"
-                    value="{{ old('stok', $produk->stok) }}" required>
-            </div>
-
-            <!-- Kategori -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="kategori">
-                    Kategori
-                </label>
-                <select name="kategori_id" id="kategori" class="form-control @error('kategori_id') is-invalid @enderror"
-                    required>
-                    <option value="">Pilih Kategori</option>
-                    @foreach($kategoris as $kategori)
-                    <option value="{{ $kategori->id }}" {{ old('kategori_id', $produk->kategori_id) == $kategori->id ?
-                        'selected' : '' }}>
-                        {{ $kategori->nama }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <!-- Platform -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="platform">
-                    Platform
-                </label>
-                <input type="text" name="platform" id="platform"
-                    class="form-control @error('platform') is-invalid @enderror"
-                    value="{{ old('platform', $produk->platform) }}" required>
-            </div>
-
-            <!-- Gambar Produk -->
-            <div class="form-group">
-                <label class="block text-sm font-medium text-gray-700 mb-2" for="gambar">
-                    Gambar Produk
-                </label>
-                <input type="file" name="gambar" id="gambar" class="form-control" accept="image/*">
-                @if($produk->gambar)
-                <div class="mt-2">
-                    <img src="{{ asset('storage/' . $produk->gambar) }}" alt="Gambar Produk" style="max-width: 200px;">
-                </div>
-                @endif
-            </div>
-        </div>
-
-        @if($produk->zip_file)
-        <div class="mt-4">
-            <p class="text-sm text-gray-600">File ZIP sudah ada: <strong>{{ $produk->zip_file }}</strong></p>
-        </div>
-        @endif
-
-        <div class="mt-6">
-            <button type="submit" class="btn btn-primary">
-                Simpan Perubahan
-            </button>
-        </div>
-    </form>
 </div>
 @endsection

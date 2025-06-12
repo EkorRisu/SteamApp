@@ -42,7 +42,7 @@
                                 <td class="px-6 py-4 text-gray-300">{{ $transaksi->kode_produk }}</td>
                                 <td class="px-6 py-4 text-white font-medium">{{ $transaksi->nama_user }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="text-gaming-purple font-bold">
+                                    <span class="text-white font-bold">
                                         Rp {{ number_format($transaksi->harga, 2, ',', '.') }}
                                     </span>
                                 </td>

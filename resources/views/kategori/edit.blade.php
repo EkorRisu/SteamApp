@@ -1,28 +1,57 @@
-@extends('layouts.app')
+    @extends('layouts.admin')
 
 @section('content')
-    <div class="container">
-        <h2>Edit Kategori</h2>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-300 to-blue-200 px-4 py-10">
+    <div class="w-full max-w-4xl bg-white bg-opacity-10 rounded-3xl shadow-2xl backdrop-blur-sm flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Left: Icon and Title -->
+        <div class="md:w-1/2 bg-transparent p-10 flex flex-col justify-center items-center text-center">
+            <i class="fas fa-edit text-6xl text-purple-800 mb-4"></i>
+            <h2 class="text-3xl font-extrabold text-purple-800">Edit Category</h2>
+            <p class="text-gray-600 mt-2">Update your category information</p>
+        </div>
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
+        <!-- Right: Form -->
+        <div class="md:w-1/2 bg-white bg-opacity-20 rounded-3xl p-10">
+            @if($errors->any())
+            <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                <ul class="list-disc ml-4">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-        @endif
+            @endif
 
-        <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="mb-3">
-                <label for="nama" class="form-label">Nama Kategori</label>
-                <input type="text" name="nama" class="form-control" id="nama" value="{{ $kategori->nama }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Batal</a>
-        </form>
+            <form action="{{ route('kategori.update', $kategori->id) }}" method="POST" class="space-y-6">
+                @csrf
+                @method('PUT')
+                
+                <!-- Nama Kategori -->
+                <div>
+                    <label for="nama" class="block mb-2 text-sm text-gray-600">Category Name</label>
+                    <input type="text" 
+                           name="nama" 
+                           id="nama"
+                           class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-30 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-purple-400"
+                           value="{{ old('nama', $kategori->nama) }}"
+                           placeholder="Enter category name"
+                           required>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-4">
+                    <button type="submit"
+                            class="flex-1 bg-gradient-to-r from-purple-400 to-blue-400 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-3 rounded-xl shadow-md transition-all duration-300">
+                        Update Category
+                    </button>
+                    <a href="{{ route('kategori.index') }}"
+                       class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 rounded-xl shadow-md transition-all duration-300 text-center">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 @endsection

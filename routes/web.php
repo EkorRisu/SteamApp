@@ -63,6 +63,7 @@ Route::post('/transaksi/konfirmasi/{id}', [PembelianController::class, 'konfirma
 Route::get('/transaksi/cetak/{id}', [PembelianController::class, 'generatePdf'])->name('transaksi.cetak');
 Route::get('/transaksi/transaksiManager', [PembelianController::class, 'transaksiIndexManager'])->name('transaksi.transaksiManager');
 
+
 //library
 Route::middleware(['auth', 'user-access:user'])->group(function () {
     Route::get('/library', [PembelianController::class, 'library'])->name('transaksi.library');

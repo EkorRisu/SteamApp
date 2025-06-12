@@ -9,7 +9,7 @@
             <p class="text-lg text-gray-300">Review and manage your game purchases</p>
         </div>
 
-        <!-- Navigation Buttons -->
+        <!-- Navigation Links -->
         <div class="flex justify-center gap-4 mb-8">
             <a href="{{ route('home') }}" 
                class="px-8 py-3 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200 flex items-center gap-2">
@@ -20,6 +20,11 @@
                class="px-8 py-3 bg-gaming-blue hover:bg-gaming-purple transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200 flex items-center gap-2">
                 <i class="fas fa-book"></i>
                 <span>My Library</span>
+            </a>
+            <a href="{{ route('transaksi.transaksi') }}" 
+               class="px-8 py-3 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200 flex items-center gap-2">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Purchase History</span>
             </a>
         </div>
 
@@ -34,7 +39,6 @@
 <!-- Cart Section -->
 <section class="py-16 bg-gaming-dark text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Cart Items -->
         <div class="bg-gaming-card rounded-xl overflow-hidden shadow-lg">
             <div class="overflow-x-auto">
                 <table class="min-w-full">
@@ -60,9 +64,9 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                        @if($cart->status == 'Selesai') bg-green-500/20 text-green-400
-                                        @elseif($cart->status == 'Pending') bg-yellow-500/20 text-yellow-400
-                                        @else bg-red-500/20 text-red-400 @endif">
+                                        @if($cart->status == 'Selesai') bg-green-600/30 text-green-500
+                                        @elseif($cart->status == 'Pending') bg-yellow-600/25 text-yellow-500
+                                        @else bg-red-600/20 text-red-500 @endif">
                                         <i class="fas fa-circle text-xs mr-2"></i>
                                         {{ $cart->status }}
                                     </span>
@@ -72,28 +76,31 @@
                                 </td>
                                 <td class="px-6 py-4 text-center space-x-2">
                                     @if($cart->status == 'Pending')
+                                        <!-- Purchase Button -->
                                         <form action="{{ route('transaksi.bayar') }}" method="POST" class="inline-block">
                                             @csrf
                                             <input type="hidden" name="cart_id" value="{{ $cart->id }}">
                                             <button type="submit" 
                                                     class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
                                                 <i class="fas fa-shopping-cart"></i>
-                                                <span>Purchase</span>
+                                                <span>Pay Now</span>
                                             </button>
                                         </form>
                                         
+                                        <!-- Delete Button -->
                                         <form action="{{ route('transaksi.clearcart', $cart->id) }}" 
-                                              method="POST" 
-                                              class="inline-block">
+                                              method="GET" 
+                                              class="inline-block"
+                                              onsubmit="return confirm('Are you sure you want to delete this item?');">
                                             @csrf
-                                            @method('POST')
                                             <button type="submit"
                                                     class="px-4 py-2 bg-red-600 hover:bg-red-700 transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
-                                                <i class="fas fa-times"></i>
-                                                <span>Remove</span>
+                                                <i class="fas fa-trash"></i>
+                                                <span>Delete</span>
                                             </button>
                                         </form>
                                     @elseif($cart->status == 'Selesai')
+                                        <!-- Print Receipt Button -->
                                         <a href="{{ route('transaksi.cetak', $cart->id) }}"
                                            target="_blank"
                                            class="px-4 py-2 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
