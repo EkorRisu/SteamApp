@@ -1,73 +1,124 @@
-@extends('layouts.app')
+@extends('layouts.user')
+
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <div>{{ __('Data Tiket') }}</div>
-                        <div><a href="{{ route('home') }}" style="text-decoration: none;">{{ __('Beranda')
-    }}</a></div>
-                        <div><a href="{{ route('transaksi.transaksi') }}" style="text-decoration: none;">{{ __('Bayar
-    Tiket') }}</a></div>
-                    </div>
-                    <div class="card-body">
-                        @if(session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
-                        @endif
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Kode Produk</th>
-                                    <th>Nama Pembeli</th>
-                                    <th>Harga</th>
-                                    <th>Status</th>
-                                    <th>Tanggal Transaksi</th>
-                                    <th class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($carts as $cart)
-                                                        <tr>
-                                                            <td>{{ $cart->kode_produk }}</td>
-                                                            <td>{{ $cart->nama_user}}</td>
-                                                            <td>{{ $cart->harga }}</td>
-                                                            <td style="color: {{ $cart->status == 'Selesai' ? 'green' : ($cart->status == 'Pending' ?
-                                    'red' : 'black') }};">
-                                                                {{ $cart->status }}
-                                                            </td>
-                                                            <td>{{ $cart->created_at }}</td>
-                                                            <td>
-                                                                <a href="{{ route('home') }}" class="btn btn-sm btn-primary">Beranda</a>
-                                                            </td>
-                                                            <td>
-                                                                <form action="{{ route('transaksi.bayar') }}" method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="cart_id" value="{{ $cart->id }}">
-                                                                    <button type="submit" class="btn btn-sm btn-success">Bayar</button>
-                                                                </form>
-                                                            </td>
-                                                            <td>
-                                                                <form action="{{ route('transaksi.clearcart', $cart->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('POST')
-                                                                    <!-- Cek status transaksi -->
-                                                                    @if($cart->status == 'Pending')
-                                                                        <!-- Jika status Pending, tampilkan tombol Batal -->
-                                                                        <button type="submit" class="btn btn-sm btn-danger me-0">Batal</button>
-                                                                    @elseif($cart->status == 'Selesai')
-                                                                        <!-- Jika status Selesai, tampilkan tombol Cetak -->
-                                                                        <a href="{{ route('transaksi.cetak', $cart->id) }}" target="_blank"
-                                                                            class="btn btn-sm btn-success me-0">Cetak</a>
-                                                                    @endif
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-gaming-purple via-gaming-dark to-gaming-blue py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">Your Shopping Cart</h1>
+            <p class="text-lg text-gray-300">Review and manage your game purchases</p>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-center gap-4 mb-8">
+            <a href="{{ route('home') }}" 
+               class="px-8 py-3 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200 flex items-center gap-2">
+                <i class="fas fa-home"></i>
+                <span>Back to Store</span>
+            </a>
+            <a href="{{ route('transaksi.library') }}" 
+               class="px-8 py-3 bg-gaming-blue hover:bg-gaming-purple transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200 flex items-center gap-2">
+                <i class="fas fa-book"></i>
+                <span>My Library</span>
+            </a>
+        </div>
+
+        @if(session('success'))
+            <div class="mb-6 mx-auto max-w-4xl p-4 bg-green-500/20 border-l-4 border-green-500 text-green-400 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+    </div>
+</section>
+
+<!-- Cart Section -->
+<section class="py-16 bg-gaming-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Cart Items -->
+        <div class="bg-gaming-card rounded-xl overflow-hidden shadow-lg">
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gaming-darker">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-white font-semibold">Game Code</th>
+                            <th class="px-6 py-4 text-left text-white font-semibold">Name</th>
+                            <th class="px-6 py-4 text-left text-white font-semibold">Price</th>
+                            <th class="px-6 py-4 text-left text-white font-semibold">Status</th>
+                            <th class="px-6 py-4 text-left text-white font-semibold">Added Date</th>
+                            <th class="px-6 py-4 text-center text-white font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gaming-darker">
+                        @forelse($carts as $cart)
+                            <tr class="hover:bg-gaming-darker/50 transition-colors duration-200">
+                                <td class="px-6 py-4 text-gray-300">{{ $cart->kode_produk }}</td>
+                                <td class="px-6 py-4 text-white font-medium">{{ $cart->nama_user }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-gaming-purple font-bold">
+                                        Rp {{ number_format($cart->harga, 0, ',', '.') }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                        @if($cart->status == 'Selesai') bg-green-500/20 text-green-400
+                                        @elseif($cart->status == 'Pending') bg-yellow-500/20 text-yellow-400
+                                        @else bg-red-500/20 text-red-400 @endif">
+                                        <i class="fas fa-circle text-xs mr-2"></i>
+                                        {{ $cart->status }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-300">
+                                    {{ $cart->created_at->format('d M Y H:i') }}
+                                </td>
+                                <td class="px-6 py-4 text-center space-x-2">
+                                    @if($cart->status == 'Pending')
+                                        <form action="{{ route('transaksi.bayar') }}" method="POST" class="inline-block">
+                                            @csrf
+                                            <input type="hidden" name="cart_id" value="{{ $cart->id }}">
+                                            <button type="submit" 
+                                                    class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <span>Purchase</span>
+                                            </button>
+                                        </form>
+                                        
+                                        <form action="{{ route('transaksi.clearcart', $cart->id) }}" 
+                                              method="POST" 
+                                              class="inline-block">
+                                            @csrf
+                                            @method('POST')
+                                            <button type="submit"
+                                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
+                                                <i class="fas fa-times"></i>
+                                                <span>Remove</span>
+                                            </button>
+                                        </form>
+                                    @elseif($cart->status == 'Selesai')
+                                        <a href="{{ route('transaksi.cetak', $cart->id) }}"
+                                           target="_blank"
+                                           class="px-4 py-2 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-medium inline-flex items-center gap-2 hover:scale-105 duration-200">
+                                            <i class="fas fa-print"></i>
+                                            <span>Print Receipt</span>
+                                        </a>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center px-6 py-12">
+                                    <i class="fas fa-shopping-cart text-5xl text-gray-600 mb-4"></i>
+                                    <p class="text-xl text-gray-400">Your cart is empty</p>
+                                    <a href="{{ route('home') }}" 
+                                       class="inline-block mt-4 px-6 py-2 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-medium hover:scale-105 duration-200">
+                                        Browse Games
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+</section>
 @endsection

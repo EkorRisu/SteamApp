@@ -1,516 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.user')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopGaming - Temukan Game Favoritmu</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* Header dengan warna ungu sesuai gambar */
-        .navbar-custom {
-            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
-        }
-
-        /* Style untuk "play play" text */
-        .brand-text {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .brand-text:hover {
-            color: #E5E7EB;
-            text-decoration: none;
-        }
-
-        /* Brand Icon Sizing */
-        .brand-icon-img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-
-        /* Responsive Icon Sizes */
-        .icon-sm {
-            width: 16px;
-            height: 16px;
-        }
-
-        .icon-md {
-            width: 24px;
-            height: 24px;
-        }
-
-        .icon-lg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .icon-xl {
-            width: 48px;
-            height: 48px;
-        }
-
-        /* Logo Sizes */
-        .logo-sm {
-            max-height: 30px;
-            width: auto;
-        }
-
-        .logo-md {
-            max-height: 40px;
-            width: auto;
-        }
-
-        .logo-lg {
-            max-height: 60px;
-            width: auto;
-        }
-
-        /* Game Card Images */
-        .game-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        .game-image-small {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        /* Avatar/Profile Images */
-        .avatar-sm {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .avatar-md {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .avatar-lg {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Responsive Images */
-        .img-responsive {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Background Image Sizing */
-        .bg-cover {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .bg-contain {
-            background-size: contain;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* Media Queries untuk Responsive */
-        @media (max-width: 768px) {
-            .brand-icon-img {
-                width: 24px;
-                height: 24px;
-            }
-
-            .logo-md {
-                max-height: 32px;
-            }
-
-            .game-image {
-                height: 150px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .brand-icon-img {
-                width: 20px;
-                height: 20px;
-            }
-
-            .logo-md {
-                max-height: 28px;
-            }
-
-            .game-image {
-                height: 120px;
-            }
-        }
-
-        /* Style untuk tombol login dan register */
-        .btn-auth {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            text-decoration: none;
-            margin-left: 10px;
-        }
-
-        .btn-auth:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b4e 50%, #1a1a1a 100%);
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #A78BFA, #E879F9, #8B5CF6);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
-        }
-
-        .hero-subtitle {
-            font-size: 1.3rem;
-            color: #D1D5DB;
-            margin-bottom: 40px;
-        }
-
-        .btn-hero {
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            border: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .btn-primary-hero {
-            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
-            color: white;
-        }
-
-        .btn-primary-hero:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
-            background: linear-gradient(135deg, #7C3AED, #6366F1);
-        }
-
-        .btn-secondary-hero {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary-hero:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        /* Game Cards */
-        .game-card {
-            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .game-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
-            border-color: rgba(139, 92, 246, 0.5);
-        }
-
-        .game-card-image {
-            height: 200px;
-            background: linear-gradient(135deg, #374151, #1F2937);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-card-image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1));
-        }
-
-        .game-icon {
-            font-size: 4rem;
-            color: #8B5CF6;
-            z-index: 2;
-            position: relative;
-        }
-
-        /* Features Section */
-        .features-section {
-            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-            padding: 80px 0;
-        }
-
-        .feature-item {
-            background: rgba(139, 92, 246, 0.1);
-            padding: 30px;
-            border-radius: 15px;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .feature-item:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.4);
-            transform: translateY(-5px);
-        }
-
-        .feature-number {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        /* Footer */
-        .footer-custom {
-            background: #0f0f0f;
-            padding: 60px 0 30px;
-        }
-
-        .footer-link {
-            color: #9CA3AF;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: #8B5CF6;
-        }
-
-        .social-link {
-            background: #374151;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .social-link:hover {
-            background: #8B5CF6;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .newsletter-input {
-            background: #374151;
-            border: 1px solid #4B5563;
-            color: white;
-        }
-
-        .newsletter-input:focus {
-            background: #374151;
-            border-color: #8B5CF6;
-            color: white;
-            box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
-        }
-
-        .btn-newsletter {
-            background: #8B5CF6;
-            border: 1px solid #8B5CF6;
-        }
-
-        .btn-newsletter:hover {
-            background: #7C3AED;
-            border-color: #7C3AED;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Navigation sesuai dengan gambar -->
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container">
-            <!-- Brand "play play" sesuai gambar -->
-            <a class="brand-text" href="{{ route('home') }}">
-                <img src="{{ asset('images/icon.svg') }}" alt="Play Icon" class="brand-icon-img">
-                play play
+@section('content')
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-gaming-purple via-gaming-dark to-gaming-blue min-h-screen flex items-center justify-center">
+    <div class="text-center px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6">Welcome to <span class="text-gaming-purple">Play Play</span></h1>
+        <p class="text-lg md:text-2xl text-gray-300 mb-8">Temukan & mainkan berbagai pilihan game seru</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#games-section" class="px-8 py-3 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200">
+                <i class="fas fa-shopping-cart mr-2"></i>Shop
             </a>
+            <a href="{{ route('login') }}" class="px-8 py-3 bg-gaming-blue hover:bg-gaming-purple transition rounded-lg text-white font-semibold shadow-lg hover:scale-105 duration-200">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </a>
+        </div>
+    </div>
+</section>
 
-            <!-- Navigation Links (hidden on mobile) -->
-
-            <!-- Auth Buttons sesuai gambar -->
-            <div class="ms-auto">
-                <a href="{{ route('login') }}" class="btn-auth">login</a>
-                <a href="{{ route('register') }}" class="btn-auth">register</a>
+<!-- Games Section -->
+<section id="games-section" class="py-16 bg-gaming-dark text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h2 class="text-3xl font-bold">Game</h2>
+                <p class="text-gray-400">Terpopuler</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ route('register') }}" class="px-4 py-2 bg-gaming-purple hover:bg-gaming-blue transition rounded-lg text-white font-semibold flex items-center gap-2 shadow hover:scale-105">
+                    <i class="fas fa-user-plus"></i>Register
+                </a>
+                <a href="{{ route('login') }}" class="px-4 py-2 bg-gaming-blue hover:bg-gaming-purple transition rounded-lg text-white font-semibold flex items-center gap-2 shadow hover:scale-105">
+                    <i class="fas fa-sign-in-alt"></i>Login
+                </a>
             </div>
         </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section text-center text-white">
-        <div class="container hero-content">
-            <h1 class="hero-title">PLAY PLAY</h1>
-            <p class="hero-subtitle">Temukan Mainkan berbagai pilihan game seru </p>
-            <a href="#store" class="btn btn-primary-hero btn-hero">Mulai Belanja</a>
-            <a href="#fitur" class="btn btn-secondary-hero btn-hero">Lihat Fitur</a>
-        </div>
-    </section>
-
-    <!-- Fitur Section -->
-    <section id="fitur" class="features-section text-white">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-item text-center">
-                        <div class="feature-number">1</div>
-                        <h5>Ribuan Game</h5>
-                        <p>Temukan berbagai game dari berbagai genre yang bisa kamu mainkan kapan saja.</p>
+        <!-- Game Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dota 2 -->
+            <div class="bg-gaming-card rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-300">
+                <div class="relative h-48 bg-gaming-darker">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg" alt="Dota 2" class="w-full h-full object-cover">
+                    <div class="absolute top-3 left-3">
+                        <span class="bg-black bg-opacity-70 text-white text-xs px-3 py-1 rounded-full flex items-center">
+                            <i class="fab fa-steam mr-1"></i>Steam
+                        </span>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-item text-center">
-                        <div class="feature-number">2</div>
-                        <h5>Pembayaran Mudah</h5>
-                        <p>Didukung oleh berbagai metode pembayaran cepat dan aman untuk semua pengguna.</p>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold">Dota 2</h3>
+                        <span class="text-xs bg-gaming-purple px-2 py-1 rounded text-white">MOBA</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-3">MOBA klasik dari Valve</p>
+                    <a href="{{ route('login') }}" class="w-full px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-lg font-medium transition-all duration-300 text-center block">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login to Play
+                    </a>
+                </div>
+            </div>
+
+            <!-- CS:GO -->
+            <div class="bg-gaming-card rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-300">
+                <div class="relative h-48 bg-gaming-darker">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg" alt="CS:GO" class="w-full h-full object-cover">
+                    <div class="absolute top-3 left-3">
+                        <span class="bg-black bg-opacity-70 text-white text-xs px-3 py-1 rounded-full flex items-center">
+                            <i class="fab fa-steam mr-1"></i>Steam
+                        </span>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-item text-center">
-                        <div class="feature-number">3</div>
-                        <h5>Komunitas Aktif</h5>
-                        <p>Bergabung dalam komunitas gamer aktif dan diskusikan game favoritmu.</p>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold">CS:GO</h3>
+                        <span class="text-xs bg-gaming-purple px-2 py-1 rounded text-white">FPS</span>
                     </div>
+                    <p class="text-gray-400 text-sm mb-3">Game FPS kompetitif</p>
+                    <a href="{{ route('login') }}" class="w-full px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-lg font-medium transition-all duration-300 text-center block">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login to Play
+                    </a>
+                </div>
+            </div>
+
+            <!-- GTA V -->
+            <div class="bg-gaming-card rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition duration-300">
+                <div class="relative h-48 bg-gaming-darker">
+                    <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg" alt="GTA V" class="w-full h-full object-cover">
+                    <div class="absolute top-3 left-3">
+                        <span class="bg-black bg-opacity-70 text-white text-xs px-3 py-1 rounded-full flex items-center">
+                            <i class="fab fa-steam mr-1"></i>Steam
+                        </span>
+                    </div>
+                </div>
+                <div class="p-5">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-bold">GTA V</h3>
+                        <span class="text-xs bg-gaming-purple px-2 py-1 rounded text-white">Action</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-3">Petualangan open-world</p>
+                    <a href="{{ route('login') }}" class="w-full px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white rounded-lg font-medium transition-all duration-300 text-center block">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login to Play
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Game Card Section -->
-    <section id="store" class="py-5 bg-dark text-white">
-        <div class="container">
-            <h2 class="text-center mb-4">Game Populer</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="game-card">
-                        <div class="game-card-image">
-                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/header.jpg"
-                                class="game-image" alt="Dota 2">
-                        </div>
-                        <div class="p-3">
-                            <h5>Dota 2</h5>
-                            <p>MOBA klasik dari Valve. Gratis untuk dimainkan!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="game-card">
-                        <div class="game-card-image">
-                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg"
-                                class="game-image" alt="CS:GO">
-                        </div>
-                        <div class="p-3">
-                            <h5>CS:GO</h5>
-                            <p>Game FPS kompetitif yang mendunia.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="game-card">
-                        <div class="game-card-image">
-                            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg"
-                                class="game-image" alt="GTA V">
-                        </div>
-                        <div class="p-3">
-                            <h5>GTA V</h5>
-                            <p>Petualangan open-world paling populer dari Rockstar.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer-custom text-center text-white">
-        <div class="container">
-            <p>&copy; 2025 play play. All rights reserved.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+    </div>
+</section>
+@endsection
