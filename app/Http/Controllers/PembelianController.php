@@ -53,17 +53,21 @@ class PembelianController extends Controller
             return redirect()->back()->with('error', 'Produk sudah ada di cart!');
         }
 
+        // Kurangi stok
+        $produk->stok -= 1;
+        $produk->save();
+
         // Buat cart baru
         Cart::create([
             'user_id' => $user->id,
             'kode_produk' => $produk->kode_produk,
             'nama_user' => $user->name,
             'harga' => $produk->harga,
-            'status' => 'pending'
+            'status' => 'Pending'
         ]);
 
         return redirect()->route('transaksi.cart')
-                        ->with('success', 'Produk berhasil ditambahkan ke cart!');
+                        ->with('success', 'Game berhasil ditambahkan ke cart!');
     }
 
     public function clearcart($id)

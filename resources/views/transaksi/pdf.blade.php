@@ -63,7 +63,7 @@
     <div class="container">
         <div class="header">
             {{-- Ganti src dengan path logo asli jika tersedia --}}
-            <img src="{{ public_path('logo_tokopedia.png') }}" alt=" PintuDagang">
+            <img src="{{ asset('images/icon.svg') }}" alt="Play Play" class="brand-icon-img h-12 w-12">
             <h2>Struk Pembayaran</h2>
         </div>
 

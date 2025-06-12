@@ -31,4 +31,9 @@ class User extends Authenticatable
     ];
 
     // Hapus accessor type()
+
+    public function produks()
+    {
+        return $this->hasMany(Produk::class);
+    }
 }

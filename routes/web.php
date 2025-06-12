@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PembelianController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\GameController;
 
 Route::get('/', fn() => view('welcome'))->name('welcome');
 
@@ -76,4 +77,10 @@ Route::delete('/library/{id}/delete', [PembelianController::class, 'hapusDariLib
 Route::middleware(['auth'])->group(function () {
     // Add to cart route harus menggunakan POST
     Route::post('/cart/add', [PembelianController::class, 'beli'])->name('transaksi.beli');
+});
+
+// Tambahkan di dalam route group user
+Route::middleware(['auth', 'user-access:user'])->group(function () {
+    Route::get('/games/upload', [GameController::class, 'create'])->name('games.create');
+    Route::post('/games/store', [GameController::class, 'store'])->name('games.store');
 });

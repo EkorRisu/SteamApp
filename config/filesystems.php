@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
@@ -29,7 +28,6 @@ return [
     */
 
     'disks' => [
-
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
@@ -43,6 +41,7 @@ return [
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -58,6 +57,12 @@ return [
             'report' => false,
         ],
 
+        'games' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/games'),
+            'url' => env('APP_URL').'/storage/games',
+            'visibility' => 'public',
+        ],
     ],
 
     /*
@@ -74,5 +79,4 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
-
 ];

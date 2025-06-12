@@ -19,20 +19,23 @@ class Produk extends Model
         'gambar',
         'kategori_id',
         'platform',
-        'zip_file'
+        'zip_file',
+        'user_id' // Add user_id to fillable
     ];
 
+    // Add relationship to User model
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
-
-
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class);
+    }
 
     public function carts()
     {
         return $this->hasMany(Cart::class, 'kode_produk', 'kode_produk');
-    }
-    
-    public function kategori()
-    {
-        return $this->belongsTo(Kategori::class);
     }
 }

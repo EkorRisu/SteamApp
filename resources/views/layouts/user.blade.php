@@ -90,12 +90,19 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden md:flex items-center space-x-8">
+
+                    @auth
                     <a href="{{ route('home') }}" class="text-gray-300 hover:text-white transition-colors">Home</a>
                     <a href="{{ route('transaksi.cart') }}"
                         class="text-gray-300 hover:text-white transition-colors">Cart</a>
                     <a href="{{ route('transaksi.library') }}"
                         class="text-gray-300 hover:text-white transition-colors">Library</a>
+                    <a href="{{ route('games.create') }}" class="text-gray-300 hover:text-white transition-colors">
+                        Upload Game
+                    </a>
+                    @endauth
                 </div>
+
 
                 <!-- Auth Buttons -->
                 <div class="flex items-center space-x-3">
